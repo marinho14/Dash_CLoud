@@ -11,24 +11,17 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime  
 import plotly.graph_objects as go
+from database import Database_Google
 
 ###################################################################################
 
-scope = ['https://www.googleapis.com/auth/spreadsheets',
-         "https://www.googleapis.com/auth/drive"]
-
-credentials = ServiceAccountCredentials.from_json_keyfile_name("exoesquelet-eafit-sheet-bcb340f88950.json", scope)
-client = gspread.authorize(credentials)
-
-data_base = client.open("NewDatabase")
-
-sheet1 = data_base.worksheet("Sheet1")
-sheet2 = data_base.worksheet("sheet2")
+Google= Database_Google("NewDatabase","Sheet1","sheet2")
 
 color_sliders= "#FFFFFF"
 
 time_stamp_global=[]
 Torque_global=[]
+Dispo_global=[]
 ###################################################################################
 ##app.title = 'Utms' ## Tittle in the web page
 ##app._favicon = ("assets/favicon.ico") Image in the webpage
@@ -85,13 +78,26 @@ app.layout = html.Div(children=[
         ]),
     ],className="Fila_1"),
 
-    html.Button('Empezar', n_clicks=0, id='start_butt',className='button1'),
+    dcc.Dropdown(['Hombre', 'Mujer'], 'Hombre',id='gender-dropdown',className='banner_d'),
 
-    dcc.Graph(id = 'graph_torque_final', animate = True, className="Graph"),
+    html.Button('Empezar', n_clicks=0, id='start_butt',className='button1'),
     
+
+    dbc.Row([ 
+
+        dbc.Col([
+            dcc.Graph(id = 'graph_torque_final', animate = True, className="Graph_izq")
+        ]),
+
+        dbc.Col([
+            dcc.Graph(id = 'graph_disposicion_final', animate = True, className="Graph_der"),
+        ]),
+
+    ],className="Fila_1"),
+
     dcc.Interval(
         id = 'graph-update',
-        interval = 3000,
+        interval = 10000,
         n_intervals = 0
     ),
 
@@ -113,39 +119,59 @@ app.layout = html.Div(children=[
     Input('espasticidad-slider', 'value'),
     Input('dolor-slider', 'value'),
     Input('rv-slider', 'value'),
+    Input('gender-dropdown', 'value'),
 )
-def change_button_style(n_clicks,emocion,espa,dolor,rv):
+def change_button_style(n_clicks,emocion,espa,dolor,rv,gender):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     if 'start_butt' in changed_id:
-        sheet2.update('A1',[[emocion,espa,dolor,rv,0]])
+        Google.define_in(emocion,espa,dolor,rv,gender,0)
         return True
 
 @app.callback(
     Output("graph_torque_final", "figure"), 
+    Output("graph_disposicion_final", "figure"), 
     Input('graph-update', 'n_intervals'),
 )
-def graph(n_clicks):
-    max_row = int(sheet2.acell('A2').value)
-    tiempo= sheet1.get("A"+str(max_row-2)+":A"+str(max_row))
-    date_time = list(map(lambda x: datetime.fromtimestamp(float(x[0])), tiempo))
-    Torque= sheet1.get("I"+str(max_row-2)+":I"+str(max_row))
-    Torque= list(map(lambda x: float(x[0]), Torque))
+def graph_toqrque(n_intervals):
+    max_row = int(Google.sheet2.acell('A2').value)
 
+    tiempo= Google.sheet1.get("A"+str(1)+":A"+str(max_row))
+    time_stamp_global = list(map(lambda x: datetime.fromtimestamp(float(x[0])), tiempo))
 
-    time_stamp_global.extend(date_time)
-    Torque_global.extend(Torque)
+    Torque= Google.sheet1.get("I"+str(1)+":I"+str(max_row))
+    Torque_global= list(map(lambda x: float(x[0]), Torque))
 
-    print(time_stamp_global)
-    print(Torque_global)
-    data = go.Scatter(
+    Dispo= Google.sheet1.get("G"+str(1)+":G"+str(max_row))
+    Dispo_global= list(map(lambda x: float(x[0]), Dispo))
+
+    if len(Torque_global)>10:
+        time_stamp_global=time_stamp_global[:-10]
+        Torque_global=Torque_global[:-10]
+        Dispo_global =Dispo_global[:-10]
+
+    data_torque = go.Scatter(
             x=time_stamp_global,
             y=Torque_global,
             name='Scatter',
             mode= 'lines+markers'
     )
 
-    return {'data': [data],
-        'layout' : go.Layout(xaxis=dict(range=[min(time_stamp_global),max(time_stamp_global)]),yaxis = dict(range = [min(Torque_global),max(Torque_global)]),)}
+    data_dispo = go.Scatter(
+            x=time_stamp_global,
+            y=Dispo_global,
+            name='Scatter',
+            mode= 'lines+markers'
+    )
+
+    return {'data'   : [data_torque],
+            'layout' : go.Layout(xaxis=dict(range=[min(time_stamp_global),max(time_stamp_global)],color="#f1f1f1"),yaxis = dict(range = [min(Torque_global),max(Torque_global)],color="#f1f1f1"),
+            title=dict(text="Grafica Torque",font=dict(color="#f1f1f1")), plot_bgcolor ='#141316',paper_bgcolor='#818d9b')
+            },{'data'   : [data_dispo],
+            'layout' : go.Layout(xaxis=dict(range=[min(time_stamp_global),max(time_stamp_global)],color="#f1f1f1"),yaxis = dict(range = [min(Dispo_global),max(Dispo_global)],color="#f1f1f1"),
+            title=dict(text="Grafica Disposición",font=dict(color="#f1f1f1")), plot_bgcolor ='#141316',paper_bgcolor='#818d9b')
+            }
+
+
 
 ###################################################################################
 

@@ -48,7 +48,7 @@
     margin-left:40%;
     margin-right:40%;    
     text-align: center;
-    background-color: #1a1a81;
+    background-color: #141316;
     position: absolute;
     border-radius: 12px;
     margin-top: 30px;
@@ -94,7 +94,26 @@
   z-index: 2;
 }
 
-.Graph {
+.Graph_izq {
   position: relative;
   margin-top: 5%;
+  margin-left: 5%;
+}
+
+.Graph_der {
+  position: relative;
+  margin-top: 5%;
+  margin-right: 5%;
+  
+}
+
+.banner_d {
+  width: 40%;
+  text-align: center;
+  position: relative; 
+  color:#0b6a81;
+  font-style: 'Graphik';
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:1em;
 }
