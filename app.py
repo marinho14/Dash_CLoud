@@ -73,19 +73,19 @@ app.layout = html.Div(children=[
             dcc.Slider(0, 5, 0.1,value=2.5,id='rv-slider',
             marks={
                 0: {'label': '0', 'style': {'color': color_sliders}},
-                2.5: {'label': '4'},
-                5: {'label': '1', 'style': {'color': color_sliders}}
+                2.5: {'label': '2.5'},
+                5: {'label': '5', 'style': {'color': color_sliders}}
             },
             tooltip={"placement": "bottom", "always_visible": True}),
         ]),
     ],className="Fila_1"),
 
-    dbc.Label("Peso(Kg)",className='banner_2'),
+    dbc.Label("Peso(Kg)",className='banner_3'),
     dcc.Slider(10, 100, 1,value=20,id='peso-slider',
     marks={
         0: {'label': '0', 'style': {'color': color_sliders}},
-        50: {'label': '4'},
-        100: {'label': '1', 'style': {'color': color_sliders}}
+        50: {'label': '50'},
+        100: {'label': '100', 'style': {'color': color_sliders}}
     },
 
     tooltip={"placement": "bottom", "always_visible": True}),
