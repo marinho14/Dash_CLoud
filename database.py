@@ -3,7 +3,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 from datetime import datetime
 import time
-from gspread_dataframe import set_with_dataframe
 import firebase_admin
 
 import firebase_admin
