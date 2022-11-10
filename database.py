@@ -83,7 +83,7 @@ class Database:
             for i in lista_aux:
                 lista_out.extend(i)
             lista_out = pd.DataFrame(lista_out)
-            lista_out[0]= lista_out[0].map(lambda x: datetime.fromtimestamp(x)) 
+            lista_out[0]= lista_out[0].map(lambda x: datetime.fromtimestamp(x,tz=timezone(timedelta(hours=5)))) 
         return lista_out
 
 
