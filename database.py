@@ -1,7 +1,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import time
 import firebase_admin
 
@@ -75,7 +75,7 @@ class Database:
             lista_out = list(map(lambda x:list(map(lambda y: float(y),x)) ,data_read))
             lista_out = pd.DataFrame(lista_out)
             
-            lista_out[0]= lista_out[0].map(lambda x: datetime.fromtimestamp(x)) 
+            lista_out[0]= lista_out[0].map(lambda x: datetime.fromtimestamp(x , tz=timezone(timedelta(hours=5)))) 
         else:
             datos_leidos = self.ref_data_soc.order_by_child("id").limit_to_last(math.ceil((max_val-min_val+1)/self.num_data)).get()
             lista_aux = list(map(lambda x: x['tabla'],list(datos_leidos.values())))
