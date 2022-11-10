@@ -80,6 +80,16 @@ app.layout = html.Div(children=[
         ]),
     ],className="Fila_1"),
 
+    dbc.Label("Peso(Kg)",className='banner_2'),
+    dcc.Slider(10, 100, 1,value=20,id='rv-slider',
+    marks={
+        0: {'label': '0', 'style': {'color': color_sliders}},
+        50: {'label': '4'},
+        100: {'label': '1', 'style': {'color': color_sliders}}
+    },
+    
+    tooltip={"placement": "bottom", "always_visible": True}),
+
     dcc.Dropdown(['Hombre', 'Mujer'], 'Hombre',id='gender-dropdown',className='banner_d'),
 
     #dcc.RadioItems([{ "label": html.Div(['Hombre'], style={'color': 'Gold', 'font-size': 20}),"value":"Hombre"},{ "label": "  Mujer","value":"Mujer"}],
