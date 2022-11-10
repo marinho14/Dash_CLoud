@@ -1,3 +1,4 @@
+platform_system == "Windows"
 asttokens==2.0.8
 attrs==22.1.0
 backcall==0.2.0
