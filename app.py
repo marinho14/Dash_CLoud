@@ -6,7 +6,6 @@ import dash_daq as daq
 from datetime import date
 import firebase_admin
 import numpy as np
-app = Dash(__name__,external_stylesheets=[dbc.themes.SLATE])
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime  
@@ -24,6 +23,8 @@ Google= Database("NewDatabase","Sheet1","sheet2","firebase")
 color_sliders= "#FFFFFF"
 
 ###################################################################################
+app = Dash(__name__,external_stylesheets=[dbc.themes.SLATE])
+server=app.server
 app.title = 'Datos Exoesqueleto' ## Tittle in the web page
 app._favicon = ("iconn.ico") 
 
