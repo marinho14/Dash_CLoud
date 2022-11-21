@@ -15,8 +15,8 @@ from database import Database
 
 
 
-val2show = 10
-val2print = 100
+val2show = 50
+val2print = 200
 
 Google= Database("NewDatabase","Sheet1","sheet2","firebase")
 
@@ -78,6 +78,7 @@ app.layout = html.Div(children=[
             },
             tooltip={"placement": "bottom", "always_visible": True}),
         ]),
+        
     ],className="Fila_1"),
 
     dbc.Label("Peso(Kg)",className='banner_3'),
@@ -121,7 +122,10 @@ app.layout = html.Div(children=[
         ]),
 
         dbc.Col([
-            dcc.Graph(id = 'graph_cont_torque_final', animate = True, className="Graph_der"),
+            dcc.Graph(id = 'graph_cont_torque_final', animate = True, className="Graph_izq"),
+        ]),
+        dbc.Col([
+            dcc.Graph(id = 'graph_corriente', animate = True, className="Graph_der"),
         ]),
 
     ],className="Fila_1"),
@@ -168,11 +172,13 @@ def change_button_style(n_clicks,emocion,espa,dolor,rv,gender):
     Output("graph_int_torque_final", "figure"), 
     Output("graph_cont_torque_final", "figure"), 
     Output("graph_realidad_virtual", "figure"), 
+    Output("graph_corriente", "figure"), 
     Output("graph_torque_final", "animate"), 
     Output("graph_disposicion_final", "animate"), 
     Output("graph_int_torque_final", "animate"), 
     Output("graph_cont_torque_final", "animate"), 
-    Output("graph_realidad_virtual", "animate"), 
+    Output("graph_realidad_virtual", "animate"),
+    Output("graph_corriente", "animate"), 
     Input('graph-update', 'n_intervals'),
 )
 def graph_toqrque(n_intervals):
@@ -192,6 +198,7 @@ def graph_toqrque(n_intervals):
         #[timestamp, emocion,espasticidad,dolor,ambienteRV, disposicion, intensidad_torque, torque_control, torque_Final, stop]
         time_stamp_global= vec_read[0]
         Torque_global = vec_read[8]
+        Corriente = vec_read[9]
         Dispo_global = vec_read[5]
         Inten_Torque = vec_read[6]
         Cont_Torque = vec_read[7]
@@ -201,6 +208,12 @@ def graph_toqrque(n_intervals):
         data_torque = go.Scatter(
                 x=time_stamp_global,
                 y=Torque_global,
+                name='Scatter',
+                mode= 'lines+markers'
+        )
+        data_corriente = go.Scatter(
+                x=time_stamp_global,
+                y=Corriente,
                 name='Scatter',
                 mode= 'lines+markers'
         )
@@ -239,6 +252,9 @@ def graph_toqrque(n_intervals):
 
         rango_minimo_torque= min(Torque_global[-val2show_local-1:-1])
         rango_maximo_torque = max(Torque_global[-val2show_local-1:-1])
+        
+        rango_minimo_corriente= min(Corriente[-val2show_local-1:-1])
+        rango_maximo_corriente = max(Corriente[-val2show_local-1:-1])
 
         rango_minimo_dispo= min(Dispo_global[-val2show_local-1:-1])
         rango_maximo_dispo= max(Dispo_global[-val2show_local-1:-1])
@@ -255,6 +271,13 @@ def graph_toqrque(n_intervals):
     else:
         flag_animate = False
         data_torque = go.Scatter(
+            x=[],
+            y=[],
+            name='Scatter',
+            mode= 'lines+markers'
+        )
+
+        data_corriente = go.Scatter(
             x=[],
             y=[],
             name='Scatter',
@@ -295,12 +318,16 @@ def graph_toqrque(n_intervals):
         Inten_Torque = [0]
         Cont_Torque = [0]
         Realidad_v = [0]
+        Corriente = [0]
 
         rango_minimo_x = 0
         rango_maximo_x = 1
 
         rango_minimo_torque= 0
         rango_maximo_torque = 1
+        
+        rango_minimo_corriente= 0
+        rango_maximo_corriente = 1
 
         rango_minimo_dispo= 0
         rango_maximo_dispo= 1
@@ -329,7 +356,10 @@ def graph_toqrque(n_intervals):
             },{'data'   : [data_realidad],
             'layout' : go.Layout(xaxis=dict(range=[rango_minimo_x,rango_maximo_x],color="#f1f1f1"),yaxis = dict(range = [rango_minimo_realidad,rango_maximo_realidad],color="#f1f1f1"),
             title=dict(text="Grafica Ambiente Virtual",font=dict(color="#f1f1f1")), plot_bgcolor ='#141316',paper_bgcolor='#818d9b')
-            },flag_animate,flag_animate,flag_animate,flag_animate,flag_animate
+            },{'data'   : [data_corriente],
+            'layout' : go.Layout(xaxis=dict(range=[rango_minimo_x,rango_maximo_x],color="#f1f1f1"),yaxis = dict(range = [rango_minimo_corriente,rango_maximo_corriente],color="#f1f1f1"),
+            title=dict(text="Grafica Corriente medida",font=dict(color="#f1f1f1")), plot_bgcolor ='#141316',paper_bgcolor='#818d9b')
+            },flag_animate,flag_animate,flag_animate,flag_animate,flag_animate,flag_animate
 
 
 
