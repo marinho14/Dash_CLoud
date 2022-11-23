@@ -15,8 +15,8 @@ from database import Database
 
 
 
-val2show = 500
-val2print = 2000
+val2show = 50
+val2print = 300
 
 Google= Database("NewDatabase","Sheet1","sheet2","firebase")
 
@@ -133,7 +133,7 @@ app.layout = html.Div(children=[
 
     dcc.Interval(
         id = 'graph-update',
-        interval = 1000,
+        interval = 5000,
         n_intervals = 0
     ),
 
@@ -182,6 +182,7 @@ def change_button_style(n_clicks,emocion,espa,dolor,rv,gender):
     Input('graph-update', 'n_intervals'),
 )
 def graph_toqrque(n_intervals):
+
     max_row = Google.get_max()
     if(max_row>0):
         min_val = max_row-val2print
