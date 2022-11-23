@@ -15,7 +15,7 @@ from database import Database
 
 
 
-val2show = 50
+val2show = 200
 val2print = 300
 
 Google= Database("NewDatabase","Sheet1","sheet2","firebase")
