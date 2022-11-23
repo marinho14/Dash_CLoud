@@ -15,8 +15,8 @@ from database import Database
 
 
 
-val2show = 50
-val2print = 200
+val2show = 500
+val2print = 2000
 
 Google= Database("NewDatabase","Sheet1","sheet2","firebase")
 
@@ -133,7 +133,7 @@ app.layout = html.Div(children=[
 
     dcc.Interval(
         id = 'graph-update',
-        interval = 10000,
+        interval = 1000,
         n_intervals = 0
     ),
 
